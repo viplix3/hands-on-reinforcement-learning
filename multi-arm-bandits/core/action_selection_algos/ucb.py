@@ -35,7 +35,7 @@ class UpperConfidenceBound(ActionSelectionAlgo):
         UCB = Q + c * sqrt(ln(t) / N)
         """
         ucb = self.Q + self.c * np.sqrt(np.log(self.t + 1) / (self.N + 1e-6))
-        selected_action_idx = np.argmax(ucb)
+        selected_action_idx = np.random.choice(np.flatnonzero(ucb == ucb.max()))
         logger.debug(f"Selected action {selected_action_idx}")
         self.N[selected_action_idx] += 1
         self.t += 1

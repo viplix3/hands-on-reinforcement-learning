@@ -36,7 +36,9 @@ class EpsilonGreedy(ActionSelectionAlgo):
         if np.random.random() < self.epsilon:
             selected_action_idx = np.random.randint(self.num_arms)
         else:
-            selected_action_idx = np.argmax(self.Q)
+            selected_action_idx = np.random.choice(
+                np.flatnonzero(self.Q == self.Q.max())
+            )
         logger.debug(f"Selected action {selected_action_idx}")
         self.N[selected_action_idx] += 1
         return selected_action_idx

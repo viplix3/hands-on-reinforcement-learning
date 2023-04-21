@@ -22,7 +22,7 @@ class Greedy(ActionSelectionAlgo):
         """Selects the action with the highest estimated value
         and updates the selected action's N value
         """
-        selected_action_idx = np.argmax(self.Q)
+        selected_action_idx = np.random.choice(np.flatnonzero(self.Q == self.Q.max()))
         logger.debug(f"Selected action {selected_action_idx}")
         self.N[selected_action_idx] += 1
         return selected_action_idx
