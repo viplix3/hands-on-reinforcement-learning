@@ -1,0 +1,41 @@
+from typing import List
+import matplotlib.pyplot as plt
+
+
+def plot_rewards(num_actions: int, rewards: float, fig_name: str, save_path: str):
+    """Visualizes actions and their corresponding rewards and saves the figure
+
+    Args:
+        num_actions (int): Number of actions
+        rewards (float): Rewards for each action
+        fig_name (str): Name of the figure
+        save_path (str): Path to save the figure
+    """
+    # Figure with actions on x-axis and rewards distribution on y-axis
+    fig, ax = plt.subplots()
+    ax.set_xlabel("Actions")
+    ax.set_ylabel("Rewards")
+    ax.set_title("Rewards for each action")
+    ax.set_xticks(range(num_actions))
+    ax.set_xticklabels(range(num_actions))
+    ax.set_ylim(-4, 4)
+    ax.scatter(range(num_actions), rewards, marker="x", color="r")
+    fig.savefig(f"{save_path}/{fig_name}.png")
+
+
+def plot_average_rewards(algorithms: List, save_path: str):
+    """Plots the average reward for each step and saves the figure
+
+    Args:
+        algorithms (List): List of action selection algorithms
+        save_path (str): Path to save the figure
+    """
+    # Figure with steps on x-axis and average reward on y-axis
+    fig, ax = plt.subplots()
+    ax.set_xlabel("Steps")
+    ax.set_ylabel("Average Reward")
+    ax.set_title("Average Reward vs Steps")
+    for algo in algorithms:
+        ax.plot(algo.average_rewards, label=algo.algo_name)
+    ax.legend()
+    fig.savefig(f"{save_path}/average_rewards.png")

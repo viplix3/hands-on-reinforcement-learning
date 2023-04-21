@@ -9,6 +9,8 @@ from core.action_selection_algos.factory import (
     ActionSelectionAlgoTypes,
     ActionSelectionAlgoFactory,
 )
+from utils.misc import generate_rewards
+from utils.viz_utils import plot_rewards, plot_average_rewards
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,7 @@ logger = logging.getLogger(__name__)
 def parse_cmd_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--log_level", type=str, default="debug")
+    parser.add_argument("--plots_dir", type=str, default="plots")
     parser.add_argument("--num_arms", type=int, default=10)
     parser.add_argument("--num_runs", type=int, default=2000)
     parser.add_argument("--num_steps", type=int, default=1000)
@@ -28,6 +31,14 @@ def parse_cmd_args():
 def multiarm_bandit(args: argparse.Namespace):
     logger.info("Starting Multi-Arm Bandit")
     logger.info(f"Arguments: {args}")
+
+    actual_rewards = generate_rewards(args.num_arms)
+    plot_rewards(
+        args.num_arms,
+        actual_rewards,
+        "actual_rewards",
+        os.path.join(os.getcwd(), args.plots_dir),
+    )
 
     algo_factory = ActionSelectionAlgoFactory()
     algorithms = []
@@ -42,9 +53,13 @@ def multiarm_bandit(args: argparse.Namespace):
         for algo in algorithms:
             action = algo.select_action()
 
-        reward = np.random.random()
-        for algo in algorithms:
+            reward = actual_rewards[action]
             algo.update(action, reward)
+
+    plot_average_rewards(
+        algorithms,
+        os.path.join(os.getcwd(), args.plots_dir),
+    )
 
 
 if __name__ == "__main__":
@@ -53,6 +68,8 @@ if __name__ == "__main__":
     logfile = os.path.join(logdir, "app.log")
 
     os.makedirs(logdir, exist_ok=True)
+    os.makedirs(args.plots_dir, exist_ok=True)
+
     logging.basicConfig(
         filename=logfile,
         filemode="w",
@@ -63,4 +80,6 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    # To make the results reproducible
+    np.random.seed(42)
     multiarm_bandit(args)
