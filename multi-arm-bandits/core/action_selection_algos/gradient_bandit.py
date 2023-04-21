@@ -51,14 +51,14 @@ class GradientBandit(ActionSelectionAlgo):
         selected_action_mask = np.zeros(self.num_arms, dtype=int)
         selected_action_mask[action] = 1
 
-        self.H[selected_action_mask] = self.H[selected_action_mask] + self.alpha * (
-            reward - baseline_reward
-        ) * (1 - self.selection_prob)
-
-        self.H[selected_action_mask != 1] = (
-            self.H[selected_action_mask != 1]
-            - self.alpha * (reward - baseline_reward) * self.selection_prob
+        self.H[selected_action_mask == 1] += (
+            self.alpha * (reward - baseline_reward) * (1 - self.selection_prob)
         )
+
+        self.H[selected_action_mask == 0] -= (
+            self.alpha * (reward - baseline_reward) * self.selection_prob
+        )
+
         self.rewards[action] += reward
         self.N[action] += 1
         self.Q[action] = self.rewards[action] / self.N[action]
