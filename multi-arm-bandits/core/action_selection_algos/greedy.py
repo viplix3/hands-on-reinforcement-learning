@@ -16,6 +16,7 @@ class Greedy(ActionSelectionAlgo):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.algo_name = "Greedy"
 
     def select_action(self):
         """Selects the action with the highest estimated value
@@ -30,3 +31,4 @@ class Greedy(ActionSelectionAlgo):
         """Updates the selected action's R value and Q value"""
         self.rewards[action] += reward
         self.Q[action] = self.rewards[action] / self.N[action]
+        self.update_average_reward()

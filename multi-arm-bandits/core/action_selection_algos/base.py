@@ -36,3 +36,8 @@ class ActionSelectionAlgo(ABC):
         self.Q = np.zeros(self.num_arms)
         self.N = np.zeros(self.num_arms)
         self.rewards = np.zeros(self.num_arms)
+        self.average_rewards = []
+
+    def update_average_reward(self):
+        """Updates the average reward of the bandit."""
+        self.average_rewards.append(np.sum(self.rewards) / np.sum(self.N))

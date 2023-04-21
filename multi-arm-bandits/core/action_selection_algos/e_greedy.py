@@ -25,6 +25,7 @@ class EpsilonGreedy(ActionSelectionAlgo):
     def __init__(self, epsilon: float = 0.1, **kwargs):
         super().__init__(**kwargs)
 
+        self.algo_name = "Epsilon Greedy"
         self.epsilon = epsilon
 
     def select_action(self):
@@ -44,3 +45,4 @@ class EpsilonGreedy(ActionSelectionAlgo):
         """Updates the selected action's R value and Q value"""
         self.rewards[action] += reward
         self.Q[action] = self.rewards[action] / self.N[action]
+        self.update_average_reward()

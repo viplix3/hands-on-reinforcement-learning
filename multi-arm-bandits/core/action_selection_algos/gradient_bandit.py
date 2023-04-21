@@ -29,6 +29,7 @@ class GradientBandit(ActionSelectionAlgo):
     def __init__(self, alpha: float = 0.1, **kwargs):
         super().__init__(**kwargs)
 
+        self.algo_name = "Gradient Bandit"
         self.alpha = alpha
         self.reset()
 
@@ -40,6 +41,7 @@ class GradientBandit(ActionSelectionAlgo):
         selected_action_idx, selection_prob = self._sample_action(softmax)
 
     def update(self, action, reward):
+        self.update_average_reward()
         raise NotImplementedError
 
     def reset(self):

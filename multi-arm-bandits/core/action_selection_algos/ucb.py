@@ -24,6 +24,7 @@ class UpperConfidenceBound(ActionSelectionAlgo):
     def __init__(self, c: float = 0.2, **kwargs):
         super().__init__(**kwargs)
 
+        self.algo_name = "Upper Confidence Bound"
         self.c = c
         self.reset()
 
@@ -33,7 +34,7 @@ class UpperConfidenceBound(ActionSelectionAlgo):
 
         UCB = Q + c * sqrt(ln(t) / N)
         """
-        ucb = self.Q + self.c * np.sqrt(np.log(self.t + 1) / self.N)
+        ucb = self.Q + self.c * np.sqrt(np.log(self.t + 1) / (self.N + 1e-6))
         selected_action_idx = np.argmax(ucb)
         logger.debug(f"Selected action {selected_action_idx}")
         self.N[selected_action_idx] += 1
@@ -44,6 +45,7 @@ class UpperConfidenceBound(ActionSelectionAlgo):
         """Updates the selected action's R value and Q value"""
         self.rewards[action] += reward
         self.Q[action] = self.rewards[action] / self.N[action]
+        self.update_average_reward()
 
     def reset(self):
         """Resets the Q, N, and R values to 0"""
