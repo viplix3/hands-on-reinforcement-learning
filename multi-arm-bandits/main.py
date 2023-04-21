@@ -20,10 +20,10 @@ def parse_cmd_args():
     parser.add_argument("--log_level", type=str, default="debug")
     parser.add_argument("--plots_dir", type=str, default="plots")
     parser.add_argument("--num_arms", type=int, default=10)
-    parser.add_argument("--num_steps", type=int, default=5000)
+    parser.add_argument("--num_steps", type=int, default=50000)
     parser.add_argument("--epsilon", type=float, default=0.1)
     parser.add_argument("--c", type=float, default=0.2)
-    parser.add_argument("--alpha", type=float, default=0.1)
+    parser.add_argument("--alpha", type=float, default=0.2)
     return parser.parse_args()
 
 

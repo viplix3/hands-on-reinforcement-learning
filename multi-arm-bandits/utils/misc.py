@@ -20,7 +20,7 @@ def generate_rewards_without_variance(num_actions):
 
 def generate_rewards_with_variance(num_actions, num_steps):
     """Generates rewards for each action using a Gaussian distribution
-        Rewards are generated for each step with a variance of 5
+        Rewards are generated for each step with a standard deviation of 5
 
     Args:
         num_actions (int): Number of actions
