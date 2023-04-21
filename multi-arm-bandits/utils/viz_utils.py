@@ -1,13 +1,18 @@
-from typing import List
+import numpy as np
 import matplotlib.pyplot as plt
 
+from scipy.stats import norm
+from typing import List, Union
 
-def plot_rewards(num_actions: int, rewards: float, fig_name: str, save_path: str):
+
+def plot_rewards(
+    num_actions: int, rewards: Union[float, List[float]], fig_name: str, save_path: str
+):
     """Visualizes actions and their corresponding rewards and saves the figure
 
     Args:
         num_actions (int): Number of actions
-        rewards (float): Rewards for each action
+        rewards (Union[float, List[float]]): Rewards for each action
         fig_name (str): Name of the figure
         save_path (str): Path to save the figure
     """
@@ -18,17 +23,26 @@ def plot_rewards(num_actions: int, rewards: float, fig_name: str, save_path: str
     ax.set_title("Rewards for each action")
     ax.set_xticks(range(num_actions))
     ax.set_xticklabels(range(num_actions))
-    ax.set_ylim(-4, 4)
-    ax.scatter(range(num_actions), rewards, marker="x", color="r")
+    # ax.set_ylim(-4, 4)
+
+    for i in range(num_actions):
+        ax.axvline(i, color="k", linestyle="--", alpha=0.3)
+
+        if isinstance(rewards[i], np.ndarray):
+            ax.scatter([i] * len(rewards[i]), rewards[i], marker="o", s=10)
+        else:
+            ax.scatter(i, rewards[i], marker="o", s=10)
+
     fig.savefig(f"{save_path}/{fig_name}.png")
 
 
-def plot_average_rewards(algorithms: List, save_path: str):
+def plot_average_rewards(algorithms: List, save_path: str, fig_name: str):
     """Plots the average reward for each step and saves the figure
 
     Args:
         algorithms (List): List of action selection algorithms
         save_path (str): Path to save the figure
+        fig_name (str): Name of the figure
     """
     # Figure with steps on x-axis and average reward on y-axis
     fig, ax = plt.subplots()
@@ -38,4 +52,4 @@ def plot_average_rewards(algorithms: List, save_path: str):
     for algo in algorithms:
         ax.plot(algo.average_rewards, label=algo.algo_name)
     ax.legend()
-    fig.savefig(f"{save_path}/average_rewards.png")
+    fig.savefig(f"{save_path}/{fig_name}.png")

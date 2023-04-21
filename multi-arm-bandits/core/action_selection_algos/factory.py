@@ -4,7 +4,7 @@ from enum import Enum
 class ActionSelectionAlgoTypes(Enum):
     GREEDY = 0
     E_GREEDY = 1
-    GRADIENT_BANDIT = 2
+    # GRADIENT_BANDIT = 2
     UCB = 3
 
 
@@ -22,10 +22,10 @@ class ActionSelectionAlgoFactory:
             from .e_greedy import EpsilonGreedy
 
             return EpsilonGreedy(**kwargs)
-        elif algo_type == ActionSelectionAlgoTypes.GRADIENT_BANDIT:
-            from .gradient_bandit import GradientBandit
+        # elif algo_type == ActionSelectionAlgoTypes.GRADIENT_BANDIT:
+        #     from .gradient_bandit import GradientBandit
 
-            return GradientBandit(**kwargs)
+        #     return GradientBandit(**kwargs)
         elif algo_type == ActionSelectionAlgoTypes.UCB:
             from .ucb import UpperConfidenceBound
 

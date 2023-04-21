@@ -9,8 +9,8 @@ from core.action_selection_algos.factory import (
     ActionSelectionAlgoTypes,
     ActionSelectionAlgoFactory,
 )
-from utils.misc import generate_rewards
 from utils.viz_utils import plot_rewards, plot_average_rewards
+from utils.misc import generate_rewards_with_variance, generate_rewards_without_variance
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +20,9 @@ def parse_cmd_args():
     parser.add_argument("--log_level", type=str, default="debug")
     parser.add_argument("--plots_dir", type=str, default="plots")
     parser.add_argument("--num_arms", type=int, default=10)
-    parser.add_argument("--num_runs", type=int, default=2000)
-    parser.add_argument("--num_steps", type=int, default=1000)
+    parser.add_argument("--num_steps", type=int, default=5000)
     parser.add_argument("--epsilon", type=float, default=0.1)
-    parser.add_argument("--c", type=float, default=0.3)
+    parser.add_argument("--c", type=float, default=0.2)
     parser.add_argument("--alpha", type=float, default=0.1)
     return parser.parse_args()
 
@@ -32,11 +31,21 @@ def multiarm_bandit(args: argparse.Namespace):
     logger.info("Starting Multi-Arm Bandit")
     logger.info(f"Arguments: {args}")
 
-    actual_rewards = generate_rewards(args.num_arms)
+    rewards_without_variance = generate_rewards_without_variance(args.num_arms)
+    rewards_with_variance = generate_rewards_with_variance(
+        args.num_arms, args.num_steps
+    )
+
     plot_rewards(
         args.num_arms,
-        actual_rewards,
-        "actual_rewards",
+        rewards_without_variance,
+        "rewards_without_variance",
+        os.path.join(os.getcwd(), args.plots_dir),
+    )
+    plot_rewards(
+        args.num_arms,
+        rewards_with_variance,
+        "rewards_with_variance",
         os.path.join(os.getcwd(), args.plots_dir),
     )
 
@@ -49,16 +58,38 @@ def multiarm_bandit(args: argparse.Namespace):
         )
         algorithms.append(action_selection_algo)
 
-    for _ in tqdm(range(args.num_runs)):
+    # Run algorithms using rewards without variance
+    for algo in algorithms:
+        algo.reset()
+
+    for _ in tqdm(range(args.num_steps)):
         for algo in algorithms:
             action = algo.select_action()
 
-            reward = actual_rewards[action]
+            reward = rewards_without_variance[action]
             algo.update(action, reward)
 
     plot_average_rewards(
         algorithms,
         os.path.join(os.getcwd(), args.plots_dir),
+        fig_name="average_rewards_without_variance",
+    )
+
+    # Run algorithms with non stationary rewards
+    for algo in algorithms:
+        algo.reset()
+
+    for step in tqdm(range(args.num_steps)):
+        for algo in algorithms:
+            action = algo.select_action()
+
+            reward = rewards_with_variance[action][step]
+            algo.update(action, reward)
+
+    plot_average_rewards(
+        algorithms,
+        os.path.join(os.getcwd(), args.plots_dir),
+        fig_name="average_rewards_with_variance",
     )
 
 
@@ -81,5 +112,5 @@ if __name__ == "__main__":
     )
 
     # To make the results reproducible
-    np.random.seed(42)
+    np.random.seed(2000)
     multiarm_bandit(args)
