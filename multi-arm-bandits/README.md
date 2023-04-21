@@ -14,7 +14,7 @@ This algorithms are based on the Chapter-2 of the book [Reinfocement Learning: A
     <td style="text-align: center;">
       <img src="./assets/average_rewards_without_variance.png" alt="Average rewards for different algorithms, constant rewards model, 5k steps"/>
       <br/>
-      <span>Average rewards for different algorithms, constant rewards model</span>
+      <span>Average rewards for different algorithms, constant rewards</span>
     </td>
   </tr>
   <tr>
@@ -26,7 +26,7 @@ This algorithms are based on the Chapter-2 of the book [Reinfocement Learning: A
     <td style="text-align: center;">
       <img src="./assets/average_rewards_with_variance.png" alt="Average rewards for different algorithms, non-constant rewards model, 5k steps"/>
       <br/>
-      <span>Average rewards for different algorithms, non-constant rewards model</span>
+      <span>Average rewards for different algorithms, non-constant rewards</span>
     </td>
   </tr>
 </table>
