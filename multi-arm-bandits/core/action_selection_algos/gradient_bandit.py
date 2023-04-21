@@ -38,14 +38,35 @@ class GradientBandit(ActionSelectionAlgo):
         and updates the selected action's N value
         """
         softmax = np.exp(self.H) / np.sum(np.exp(self.H))
-        selected_action_idx, selection_prob = self._sample_action(softmax)
+        selected_action_idx, self.selection_prob = self._sample_action(softmax)
+        logger.debug(f"Selected action {selected_action_idx}")
+        self.N[selected_action_idx] += 1
+        return selected_action_idx
 
     def update(self, action, reward):
+        # Gradient ascent method to update the preferences
+        baseline_reward = (
+            self.average_rewards[-1] if len(self.average_rewards) > 0 else 0
+        )
+        selected_action_mask = np.zeros(self.num_arms, dtype=int)
+        selected_action_mask[action] = 1
+
+        self.H[selected_action_mask] = self.H[selected_action_mask] + self.alpha * (
+            reward - baseline_reward
+        ) * (1 - self.selection_prob)
+
+        self.H[selected_action_mask != 1] = (
+            self.H[selected_action_mask != 1]
+            - self.alpha * (reward - baseline_reward) * self.selection_prob
+        )
+        self.rewards[action] += reward
+        self.N[action] += 1
+        self.Q[action] = self.rewards[action] / self.N[action]
         self.update_average_reward()
-        raise NotImplementedError
 
     def reset(self):
         """Resets the H values to 0"""
+        super().reset()
         # H = preference of each action
         self.H = np.zeros(self.num_arms)
 
@@ -58,7 +79,18 @@ class GradientBandit(ActionSelectionAlgo):
             selected_action_idx (int): The index of the selected action
             selection_prob (float): The probability of the selected action
         """
-        selected_action_idx = np.argmax(softmax)
+        # Why not simply use np.argmax(softmax) ?
+        # Using np.random.choice with the softmax probabilities allows the
+        # algorithm to explore different actions with a probability
+        # proportional to their softmax values. This way, the algorithm
+        # balances exploration # and exploitation, as actions with higher
+        # preferences are more likely to be selected, but there's still
+        # a chance to try other actions as well.
+
+        # By always selecting the action with the highest probability, the
+        # algorithm may not sufficiently explore other actions and may fail
+        # to find the best possible action in certain cases. This can lead
+        # to suboptimal performance.
+        selected_action_idx = np.random.choice(np.arange(len(softmax)), p=softmax)
         selection_prob = softmax[selected_action_idx]
-        logger.debug(f"Selected action {selected_action_idx}")
         return selected_action_idx, selection_prob
