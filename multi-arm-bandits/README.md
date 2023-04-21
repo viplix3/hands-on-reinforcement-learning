@@ -33,6 +33,8 @@ This algorithms are based on the Chapter-2 of the book [Reinfocement Learning: A
 
 ## Installation
 
+To install the required dependencies, run the following command:
+
 ```bash
 conda create -f environment.yaml
 ```
@@ -48,7 +50,6 @@ The action selection step of greedy algorithm looks like this
 ```python
 def select_action(self):
     selected_action_idx = np.argmax(self.Q)
-    logger.debug(f"Selected action {selected_action_idx}")
     self.N[selected_action_idx] += 1
     return selected_action_idx
 ```
@@ -66,7 +67,6 @@ def select_action(self):
         selected_action_idx = np.random.randint(self.num_arms)
     else:
         selected_action_idx = np.argmax(self.Q)
-    logger.debug(f"Selected action {selected_action_idx}")
     self.N[selected_action_idx] += 1
     return selected_action_idx
 ```
@@ -85,7 +85,6 @@ The action selection step of UCB algorithm looks like this
 def select_action(self):
     ucb = self.Q + self.c * np.sqrt(np.log(self.t + 1) / (self.N + 1e-6))
     selected_action_idx = np.argmax(ucb)
-    logger.debug(f"Selected action {selected_action_idx}")
     self.N[selected_action_idx] += 1
     self.t += 1
     return selected_action_idx
@@ -98,11 +97,11 @@ Gradient Bandit algorithm learns a numerical preference for each action. It uses
 The action preference is updated according to the expected reward of the action.
 The preference update step of gradient bandit is based on the gradient ascent algorithm.
 
-```bash
+```yaml
 For the selected action a:
     H[a] = H[a] + alpha * (reward - baseline) * (1 - prob_a)
 
-For all other actions b != a:
+For all other actions b:
 
     H[b] = H[b] - alpha * (reward - baseline) * prob_b
 
@@ -120,7 +119,6 @@ The action selection step of gradient bandit algorithm looks like this
 def select_action(self):
     softmax = np.exp(self.H) / np.sum(np.exp(self.H))
     selected_action_idx, self.selection_prob = self._sample_action(softmax)
-    logger.debug(f"Selected action {selected_action_idx}")
     self.N[selected_action_idx] += 1
     return selected_action_idx
 
