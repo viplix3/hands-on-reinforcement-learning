@@ -49,7 +49,7 @@ The action selection step of greedy algorithm looks like this
 
 ```python
 def select_action(self):
-    selected_action_idx = np.argmax(self.Q)
+    selected_action_idx = np.random.choice(np.flatnonzero(self.Q == self.Q.max()))
     self.N[selected_action_idx] += 1
     return selected_action_idx
 ```
@@ -66,7 +66,9 @@ def select_action(self):
     if np.random.random() < self.epsilon:
         selected_action_idx = np.random.randint(self.num_arms)
     else:
-        selected_action_idx = np.argmax(self.Q)
+        selected_action_idx = np.random.choice(
+            np.flatnonzero(self.Q == self.Q.max())
+        )
     self.N[selected_action_idx] += 1
     return selected_action_idx
 ```
@@ -84,7 +86,7 @@ The action selection step of UCB algorithm looks like this
 ```python
 def select_action(self):
     ucb = self.Q + self.c * np.sqrt(np.log(self.t + 1) / (self.N + 1e-6))
-    selected_action_idx = np.argmax(ucb)
+    selected_action_idx = np.random.choice(np.flatnonzero(ucb == ucb.max()))
     self.N[selected_action_idx] += 1
     self.t += 1
     return selected_action_idx
