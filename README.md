@@ -6,4 +6,4 @@ The implementations are done for the purpose of learning reinforcement learning 
 ## What is available?
 
 - [x] [Multi-Arm Bandits action selection algorithms](multi-arm-bandits)
-- [ ] [Dynamic Programming]: Studying
+- [ ] [Dynamic Programming](dynamic-programming): Studying
