@@ -1,6 +1,6 @@
 # Reinfocement Learning Algorithms
 
-This repository contains implementations of some of the most popular reinforcement learning algorithms.
+This repository contains implementations of some of the common and popular reinforcement learning algorithms.
 The implementations are done for the purpose of learning reinforcement learning algorithms and are not optimized for performance.
 
 ## What is available?
